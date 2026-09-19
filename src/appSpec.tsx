@@ -1,5 +1,5 @@
 import { HoverPreview, applySchemaConfig, createRemoteDataset, inferSchema, useT } from '@engine'
-import type { Dataset, FicheDecorator, QuizAppSpec, Row, SchemaConfig } from '@engine'
+import type { Dataset, FicheDecorator, QuizAppSpec, Row, SchemaConfig, SpeechTemplates } from '@engine'
 import elementsCsv from './data/elements.csv?raw'
 import { elementsI18n } from './data/elements.i18n'
 import { PeriodicBackground } from './components/PeriodicBackground'
@@ -24,6 +24,38 @@ const remote = createRemoteDataset({
     'annee_decouverte', 'configuration_electronique', 'etats_oxydation',
   ],
 })
+
+/** Ce que le bouton « Écouter » d'une fiche déclame (syntaxe : voir `SpeechTemplates` dans le moteur). Une phrase saute
+ *  quand la donnée manque (pas de masse volumique pour un gaz, pas de date de découverte pour les éléments antiques…).
+ *  Français et anglais, les seules langues où les noms d'éléments sont traduits ; les autres langues sont lues en
+ *  français. Unités écrites en toutes lettres. Volontairement absents : configuration électronique et états
+ *  d'oxydation (« [Ar]4s2 3d6 », « +2|+3 ») que la voix lirait mal. */
+const speech: SpeechTemplates = {
+  fr: [
+    '{Name}, symbole {symbole}, numéro atomique {numero_atomique}.',
+    'C’est un élément de la catégorie {categorie}.',
+    'Il se situe à la période {periode}[ et au groupe {groupe}].',
+    'Sa masse atomique est de {masse_atomique_u} unités de masse atomique.',
+    'À température ambiante, c’est un {etat}.',
+    'Son électronégativité est de {electronegativite}.',
+    'Son point de fusion est de {point_fusion_c} degrés Celsius.',
+    'Son point d’ébullition est de {point_ebullition_c} degrés Celsius.',
+    'Sa masse volumique est de {masse_volumique_g_cm3} grammes par centimètre cube.',
+    'Il a été découvert en {annee_decouverte}.',
+  ],
+  en: [
+    '{Name}, symbol {symbole}, atomic number {numero_atomique}.',
+    'Its category is {categorie}.',
+    'It sits in period {periode}[ and group {groupe}].',
+    'Its atomic mass is {masse_atomique_u} atomic mass units.',
+    'At room temperature, it is a {etat}.',
+    'Its electronegativity is {electronegativite}.',
+    'Its melting point is {point_fusion_c} degrees Celsius.',
+    'Its boiling point is {point_ebullition_c} degrees Celsius.',
+    'Its density is {masse_volumique_g_cm3} grams per cubic centimetre.',
+    'It was discovered in {annee_decouverte}.',
+  ],
+}
 
 /** Mini tableau périodique (élément courant coloré), agrandi au survol. */
 function TablePosition({ row, name }: { row: Row; name: string }) {
@@ -70,6 +102,7 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
     },
     editable: true,
     ficheDecor,
+    speech,
     views: [{
       id: 'table',
       icon: '🧪',

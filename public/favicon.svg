@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#04212b"/>
+  <rect x="8" y="8" width="48" height="48" rx="8" fill="#2dd4bf" fill-opacity=".18" stroke="#2dd4bf" stroke-width="2.5"/>
+  <text x="14" y="21" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#7fe9d9">78</text>
+  <text x="32" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="800" fill="#f0fbf8">Pt</text>
+</svg>

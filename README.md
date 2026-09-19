@@ -1,6 +1,6 @@
 # Periodic Quiz
 
-Quiz sur le **tableau périodique des éléments** (118 éléments), construit sur le modèle de [quiz-forge](https://github.com/lom2gwada/quiz-forge) : React + TypeScript + Vite, questions générées automatiquement à partir d'un tableau de données, connexion partagée avec les autres applis du même projet Supabase.
+Quiz sur le **tableau périodique des éléments** (118 éléments), construit sur le modèle de [Quiz Caraïbes](https://github.com/lom2gwada/quiz-caraibes) : React + TypeScript + Vite, questions générées automatiquement à partir d'un tableau de données, connexion partagée avec les autres applis du même projet Supabase.
 
 ## Fonctionnalités
 
@@ -25,7 +25,7 @@ node scripts/build-elements-i18n.mjs pubchem.csv
 
 ## Base de données
 
-Même projet Supabase que [quiz-forge](https://github.com/lom2gwada/quiz-forge) et Oliver Quiz : **mêmes comptes** (`auth.users`), tables préfixées `periodic_*` (profils, historique, jeu de données `periodic_elements`, config `periodic_schema`, passes invités, admins, vues de classement).
+Même projet Supabase que [Quiz Caraïbes](https://github.com/lom2gwada/quiz-caraibes) et Oliver Quiz : **mêmes comptes** (`auth.users`), tables préfixées `periodic_*` (profils, historique, jeu de données `periodic_elements`, config `periodic_schema`, passes invités, admins, vues de classement).
 
 ## Architecture
 

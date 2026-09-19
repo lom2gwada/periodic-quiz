@@ -34,8 +34,8 @@ function TablePosition({ row, name }: { row: Row; name: string }) {
     <HoverPreview
       className="fiche-table-wrap"
       label={t('fiche.tableLabel', { name })}
-      trigger={<MiniPeriodicTable position={position} category={category} className="fiche-table" />}
-      preview={<MiniPeriodicTable position={position} category={category} />}
+      trigger={<MiniPeriodicTable position={position} category={category} symbol={row[COLUMNS.symbol]} className="fiche-table" />}
+      preview={<MiniPeriodicTable position={position} category={category} symbol={row[COLUMNS.symbol]} />}
     />
   )
 }

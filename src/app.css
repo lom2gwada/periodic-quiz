@@ -31,5 +31,8 @@ button.element-tile:hover, button.element-tile:focus-visible { transform: scale(
 .mini-table-cell { fill: var(--border); opacity: .55; }
 .mini-table-current { fill: hsl(var(--cat)); stroke: var(--ink); stroke-width: .5; }
 .fiche-table { width: 84px; }
-.fiche-modal .fiche-table { width: 124px; }
-.hover-preview-pop .mini-table { width: 220px; }
+.fiche-modal .fiche-table { width: 140px; }
+.hover-preview-pop .mini-table { width: 228px; }
+/* Le symbole n'est lisible que sur les tailles modale et bulle ; dans la grille de fiches il ne ferait que du bruit. */
+.mini-table-symbol { display: none; fill: #fff; stroke: rgba(0, 0, 0, .55); stroke-width: .5; paint-order: stroke; font-size: 3.3px; font-weight: 800; text-anchor: middle; dominant-baseline: central; }
+.fiche-modal .mini-table-symbol, .hover-preview-pop .mini-table-symbol { display: block; }

@@ -19,8 +19,8 @@ const STEP = 5
 const GAP = 0.6
 
 /** Aperçu du tableau périodique où seul l'élément courant est coloré (couleur de sa catégorie) : donne
- *  d'un coup d'œil sa place (bloc, famille, période). Purement décoratif, la fiche donne déjà groupe et période. */
-export function MiniPeriodicTable({ position, category, className }: { position: GridPosition | null; category: string; className?: string }) {
+ *  d'un coup d'œil sa place (bloc, famille, période), avec son symbole quand la taille le permet (voir `.mini-table-symbol` dans app.css). Purement décoratif, la fiche donne déjà groupe et période. */
+export function MiniPeriodicTable({ position, category, symbol, className }: { position: GridPosition | null; category: string; symbol?: string; className?: string }) {
   return (
     <svg className={`mini-table ${categoryClass(category)}${className ? ` ${className}` : ''}`} viewBox={`0 0 ${18 * STEP} ${10 * STEP}`} aria-hidden="true">
       {CELLS.map(({ column, row }) => (
@@ -35,14 +35,20 @@ export function MiniPeriodicTable({ position, category, className }: { position:
         />
       ))}
       {position && (
-        <rect
-          className="mini-table-current"
-          x={(position.column - 1) * STEP}
-          y={(position.row - 1) * STEP}
-          width={STEP}
-          height={STEP}
-          rx={1}
-        />
+        <>
+          {/* Légèrement plus grande que la case : déborde sur ses voisines pour mieux ressortir et loger le symbole. */}
+          <rect
+            className="mini-table-current"
+            x={(position.column - 1) * STEP - 0.6}
+            y={(position.row - 1) * STEP - 0.6}
+            width={STEP + 1.2}
+            height={STEP + 1.2}
+            rx={1.2}
+          />
+          {symbol && (
+            <text className="mini-table-symbol" x={(position.column - 0.5) * STEP} y={(position.row - 0.5) * STEP}>{symbol}</text>
+          )}
+        </>
       )}
     </svg>
   )

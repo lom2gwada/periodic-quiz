@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { makeDatasetI18n, useLocale, useT } from '@engine'
 import type { DataI18n, GenSchema, Row } from '@engine'
 import { categoryClass } from '../utils/elementCategory'
+import { elementPosition } from '../utils/elementPosition'
 
 /** Colonnes du jeu de données qui alimentent une tuile d'élément (symbole, numéro, catégorie). */
 export interface TileColumns {
@@ -43,11 +44,8 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
       const z = Number(row[tile.number])
       const group = Number(row[groupColumn])
       const period = Number(row[periodColumn])
-      const inMain = Number.isFinite(group) && group > 0 && Number.isFinite(period) && period > 0
-      // f-block : 57-71 → ligne 9, 89-103 → ligne 10, colonnes 3 à 17.
-      const fRow = z >= 57 && z <= 71 ? 9 : z >= 89 && z <= 103 ? 10 : 0
-      const fCol = fRow === 9 ? z - 57 + 3 : z - 89 + 3
-      return { row, canonical: row[schema.subjectColumn] ?? '', z, gridColumn: inMain ? group : fCol, gridRow: inMain ? period : fRow, ok: inMain || fRow > 0 }
+      const position = elementPosition(z, group, period)
+      return { row, canonical: row[schema.subjectColumn] ?? '', z, gridColumn: position?.column ?? 0, gridRow: position?.row ?? 0, ok: position !== null }
     })
     return items.filter((c) => c.ok)
   }, [rows, schema.subjectColumn, tile.number, groupColumn, periodColumn])

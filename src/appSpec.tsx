@@ -1,10 +1,12 @@
-import { applySchemaConfig, createRemoteDataset, inferSchema } from '@engine'
+import { HoverPreview, applySchemaConfig, createRemoteDataset, inferSchema, useT } from '@engine'
 import type { Dataset, FicheDecorator, QuizAppSpec, Row, SchemaConfig } from '@engine'
 import elementsCsv from './data/elements.csv?raw'
 import { elementsI18n } from './data/elements.i18n'
 import { PeriodicBackground } from './components/PeriodicBackground'
+import { MiniPeriodicTable } from './components/MiniPeriodicTable'
 import { PeriodicTablePage } from './components/PeriodicTablePage'
 import { categoryClass } from './utils/elementCategory'
+import { elementPosition } from './utils/elementPosition'
 
 /** Colonnes symbole / numéro / catégorie / groupe / période (tuiles de fiche et vue Tableau) : le jeu
  *  de données embarqué en a, un CSV importé non. */
@@ -23,8 +25,24 @@ const remote = createRemoteDataset({
   ],
 })
 
-/** Tuile symbole/numéro en tête de fiche. */
-const ficheDecor: FicheDecorator = (row) => ({
+/** Mini tableau périodique (élément courant coloré), agrandi au survol. */
+function TablePosition({ row, name }: { row: Row; name: string }) {
+  const t = useT()
+  const position = elementPosition(Number(row[COLUMNS.number]), Number(row[COLUMNS.group]), Number(row[COLUMNS.period]))
+  const category = row[COLUMNS.category] ?? ''
+  return (
+    <HoverPreview
+      className="fiche-table-wrap"
+      label={t('fiche.tableLabel', { name })}
+      trigger={<MiniPeriodicTable position={position} category={category} className="fiche-table" />}
+      preview={<MiniPeriodicTable position={position} category={category} />}
+    />
+  )
+}
+
+/** Tuile symbole/numéro à gauche du nom, mini tableau périodique à droite. */
+const ficheDecor: FicheDecorator = (row, { name }) => ({
+  trail: <TablePosition row={row} name={name} />,
   lead: (
     <span className={`element-tile fiche-tile ${categoryClass(row[COLUMNS.category] ?? '')}`} aria-hidden="true">
       <span className="element-number">{row[COLUMNS.number]}</span>

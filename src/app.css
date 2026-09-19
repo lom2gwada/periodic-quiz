@@ -27,3 +27,9 @@ button.element-tile:hover, button.element-tile:focus-visible { transform: scale(
 .periodic-legend-item:hover { filter: none; background: hsl(var(--cat) / .32); }
 .periodic-legend-item.is-active { background: hsl(var(--cat) / .5); color: var(--ink); }
 .fiche-tile { width: 3.6rem; height: 3.8rem; flex-shrink: 0; aspect-ratio: auto; }
+.mini-table { display: block; width: 100%; height: auto; }
+.mini-table-cell { fill: var(--border); opacity: .55; }
+.mini-table-current { fill: hsl(var(--cat)); stroke: var(--ink); stroke-width: .5; }
+.fiche-table { width: 84px; }
+.fiche-modal .fiche-table { width: 124px; }
+.hover-preview-pop .mini-table { width: 220px; }

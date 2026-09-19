@@ -5,5 +5,11 @@ export const appConfig: EngineConfig = {
   appId: 'periodic-quiz',
   tablePrefix: 'periodic',
   appName: 'Periodic Quiz',
+  // Thème sciences : visages · laboratoire · matière et cosmos.
+  avatars: [
+    '🙂', '😎', '🤓', '🧐', '🥼', '🤖', '👽', '🦉',
+    '🧪', '⚗️', '🔬', '🔭', '🧲', '💡', '🔋', '⚙️',
+    '⚛️', '🧬', '☢️', '💎', '🪐', '🚀', '🔥', '⚡',
+  ],
   messages,
 }

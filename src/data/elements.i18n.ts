@@ -1,4 +1,4 @@
-import type { DataI18n } from '../i18n/data'
+import type { DataI18n } from '@engine'
 
 // Traductions du jeu de données des éléments. Source = `elements.csv` (français). On ne liste que ce
 // qui diffère réellement du français. Locales : en. Les autres (es / nl / ht) retombent sur le français

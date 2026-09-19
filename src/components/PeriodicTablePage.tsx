@@ -1,17 +1,21 @@
 import { useMemo, useState } from 'react'
-import type { GenSchema, Row } from '../utils/quizGenerator'
-import type { DataI18n } from '../i18n/data'
-import { makeDatasetI18n } from '../i18n/dataset'
-import { useLocale, useT } from '../i18n'
+import { makeDatasetI18n, useLocale, useT } from '@engine'
+import type { DataI18n, GenSchema, Row } from '@engine'
 import { categoryClass } from '../utils/elementCategory'
-import type { FicheTileColumns } from './Fiche'
+
+/** Colonnes du jeu de données qui alimentent une tuile d'élément (symbole, numéro, catégorie). */
+export interface TileColumns {
+  symbol: string
+  number: string
+  category: string
+}
 
 interface PeriodicTablePageProps {
   rows: Row[]
   schema: GenSchema
   i18n?: DataI18n
   /** Colonnes symbole / numéro atomique / catégorie du jeu de données. */
-  tile: FicheTileColumns
+  tile: TileColumns
   groupColumn: string
   periodColumn: string
   onBack: () => void

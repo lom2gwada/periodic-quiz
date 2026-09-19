@@ -27,6 +27,16 @@ node scripts/build-elements-i18n.mjs pubchem.csv
 
 Même projet Supabase que [quiz-forge](https://github.com/lom2gwada/quiz-forge) et Oliver Quiz : **mêmes comptes** (`auth.users`), tables préfixées `periodic_*` (profils, historique, jeu de données `periodic_elements`, config `periodic_schema`, passes invités, admins, vues de classement).
 
+## Architecture
+
+Cette appli est un **jeu de données + des vues** posés sur le moteur commun [`quiz-engine`](https://github.com/lom2gwada/quiz-engine), inclus comme sous-module git dans `engine/` (génération de quiz, jeu, historique, classement, connexion, liens invités, édition admin, i18n…).
+
+- `src/appConfig.ts` : identité de l'appli pour le moteur (préfixe de stockage `periodic-quiz`, préfixe des tables Supabase `periodic_`, libellés propres).
+- `src/appSpec.tsx` : jeu de données embarqué, construction du `Dataset` (traductions, tableau périodique, tuiles d'éléments) et accès à la version en base.
+- `engine/` : à ne modifier que pour ce qui doit changer dans **les deux** applis (voir son README).
+
+Après un `git clone`, récupérer le moteur avec `git submodule update --init` (ou cloner avec `--recurse-submodules`). Le workflow de déploiement le fait déjà.
+
 ## Développement
 
 ```bash

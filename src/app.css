@@ -1,0 +1,29 @@
+/* — Tableau périodique — */
+.cat-nonmetal { --cat: 145 55% 45%; }
+.cat-noble { --cat: 275 55% 60%; }
+.cat-alkali { --cat: 5 70% 58%; }
+.cat-alkaline { --cat: 28 80% 55%; }
+.cat-metalloid { --cat: 100 45% 45%; }
+.cat-halogen { --cat: 52 80% 50%; }
+.cat-post { --cat: 172 50% 45%; }
+.cat-transition { --cat: 212 65% 58%; }
+.cat-lanthanide { --cat: 320 55% 58%; }
+.cat-actinide { --cat: 345 60% 58%; }
+.cat-unknown { --cat: 0 0% 55%; }
+.chart-bg { opacity: .07; }
+:root[data-theme="carte"] .chart-bg { opacity: .1; }
+.periodic-scroll { overflow-x: auto; margin-top: 1rem; padding-bottom: .5rem; }
+.periodic-grid { display: grid; grid-template-columns: repeat(18, minmax(3.3rem, 1fr)); grid-template-rows: repeat(7, auto) .7rem repeat(2, auto); gap: .25rem; min-width: 64rem; }
+.element-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .05rem; min-width: 0; aspect-ratio: 1 / 1.05; padding: .3rem .1rem .2rem; border-radius: .4rem; background: hsl(var(--cat) / .2); border: 1px solid hsl(var(--cat) / .65); color: var(--ink); font: inherit; transition: opacity .15s ease, transform .1s ease, background-color .15s ease; }
+button.element-tile { cursor: pointer; }
+button.element-tile:hover, button.element-tile:focus-visible { transform: scale(1.1); z-index: 2; background: hsl(var(--cat) / .4); }
+.element-tile.is-dimmed { opacity: .16; }
+.element-number { position: absolute; top: .15rem; left: .28rem; font-size: .6rem; font-weight: 600; color: var(--text-soft); }
+.element-symbol { font-size: 1.2rem; font-weight: 800; line-height: 1.1; }
+.element-name { max-width: 100%; padding: 0 .1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .56rem; font-weight: 600; color: var(--text-soft); }
+.periodic-placeholder { display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); border-radius: .4rem; font-size: .62rem; color: var(--text-muted); }
+.periodic-legend { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+.periodic-legend-item { padding: .3rem .75rem; border-radius: 999px; background: hsl(var(--cat) / .18); border: 1px solid hsl(var(--cat) / .6); color: var(--text); font-size: .78rem; font-weight: 700; }
+.periodic-legend-item:hover { filter: none; background: hsl(var(--cat) / .32); }
+.periodic-legend-item.is-active { background: hsl(var(--cat) / .5); color: var(--ink); }
+.fiche-tile { width: 3.6rem; height: 3.8rem; flex-shrink: 0; aspect-ratio: auto; }

@@ -16,7 +16,7 @@ if (namesEn.length !== namesFr.length) throw new Error(`Longueurs différentes :
 const q = (s) => `'${s.replace(/'/g, "\\'")}'`
 const names = namesFr.map((fr, i) => (fr === namesEn[i] ? null : `  ${/^[A-Za-z_$][\w$]*$/.test(fr) ? fr : q(fr)}: { en: ${q(namesEn[i])} },`)).filter(Boolean).join('\n')
 
-const out = `import type { DataI18n } from '../i18n/data'
+const out = `import type { DataI18n } from '@engine'
 
 // Traductions du jeu de données des éléments. Source = \`elements.csv\` (français). On ne liste que ce
 // qui diffère réellement du français. Locales : en. Les autres (es / nl / ht) retombent sur le français

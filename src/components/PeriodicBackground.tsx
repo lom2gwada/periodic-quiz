@@ -1,6 +1,6 @@
 // Fond décoratif : trame de cases façon tableau périodique. Couleur et opacité via .chart-bg
-// dans styles.css.
-export function ChartBackground() {
+// (moteur) et app.css.
+export function PeriodicBackground() {
   return (
     <div className="chart-bg" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">

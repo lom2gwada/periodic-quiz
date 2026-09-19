@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import elementsCsv from '../data/elements.csv?raw'
 import { elementsI18n } from '../data/elements.i18n'
-import { parseQuiz } from './quizValidation'
-import { generateQuiz, inferSchema, parseCsv } from './quizGenerator'
+import { parseQuiz } from '@engine/utils/quizValidation'
+import { generateQuiz, inferSchema, parseCsv } from '@engine'
 
 const rows = parseCsv(elementsCsv)
 

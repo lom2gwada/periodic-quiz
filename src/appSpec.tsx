@@ -57,6 +57,37 @@ const speech: SpeechTemplates = {
   ],
 }
 
+// Présentation générale du tableau (bouton « Écouter » de la page d'accueil, pas d'une fiche) :
+// origine, principe de classement, grandes familles. `{COUNT}` est remplacé par le nombre réel
+// d'éléments (`buildIntro`) pour ne pas se désynchroniser du CSV. Français et anglais seulement,
+// comme `speech` ci-dessus (les autres langues n'ont pas de noms d'éléments traduits).
+const introTemplate: SpeechTemplates = {
+  fr: [
+    "Le tableau périodique classe tous les éléments chimiques connus, du plus léger à l'atome le plus lourd jamais synthétisé.",
+    'Il a été imaginé en 1869 par le chimiste russe Dmitri Mendeleïev, qui avait remarqué que les propriétés des éléments se répètent selon un motif régulier.',
+    'Chaque élément y est rangé par numéro atomique croissant — le nombre de protons dans son noyau.',
+    "Les lignes s'appellent des périodes, les colonnes des groupes : deux éléments d'un même groupe partagent souvent des propriétés chimiques proches.",
+    'Le tableau distingue aussi de grandes familles, comme les métaux, les non-métaux, les métalloïdes ou les gaz nobles.',
+    "Certains éléments existent depuis la formation de la Terre ; d'autres n'ont été créés qu'en laboratoire, parfois quelques atomes à la fois.",
+    "Aujourd'hui, {COUNT} éléments sont officiellement reconnus par l'Union internationale de chimie pure et appliquée.",
+    'Ce quiz explore chacun d’eux : son symbole, sa masse, sa catégorie, et bien plus encore.',
+  ],
+  en: [
+    'The periodic table organizes every known chemical element, from the lightest to the heaviest atom ever synthesized.',
+    'It was devised in 1869 by the Russian chemist Dmitri Mendeleev, who noticed that elements’ properties repeat in a regular pattern.',
+    'Each element is placed in order of increasing atomic number — the number of protons in its nucleus.',
+    'Rows are called periods, columns are called groups: two elements in the same group often share similar chemical properties.',
+    'The table also distinguishes broad families, such as metals, nonmetals, metalloids, and noble gases.',
+    'Some elements have existed since the Earth formed; others have only ever been created in a laboratory, sometimes just a few atoms at a time.',
+    'Today, {COUNT} elements are officially recognized by the International Union of Pure and Applied Chemistry.',
+    'This quiz explores each of them: its symbol, its mass, its category, and much more.',
+  ],
+}
+
+const buildIntro = (count: number): SpeechTemplates => Object.fromEntries(
+  Object.entries(introTemplate).map(([loc, sentences]) => [loc, (sentences ?? []).map((s) => s.replace('{COUNT}', String(count)))]),
+) as SpeechTemplates
+
 /** Mini tableau périodique (élément courant coloré), agrandi au survol. */
 function TablePosition({ row, name }: { row: Row; name: string }) {
   const t = useT()
@@ -103,6 +134,7 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
     editable: true,
     ficheDecor,
     speech,
+    intro: buildIntro(rows.length),
     views: [{
       id: 'table',
       icon: '🧪',

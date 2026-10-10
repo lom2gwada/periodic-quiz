@@ -19,9 +19,12 @@ interface PeriodicTablePageProps {
   tile: TileColumns
   groupColumn: string
   periodColumn: string
-  onBack: () => void
+  onBack?: () => void
   /** Ouvre la fiche de l'élément cliqué. Reçoit la valeur FR canonique. */
-  onOpenFiche: (name: string) => void
+  onOpenFiche?: (name: string) => void
+  /** Mode « Cliquez sur X » (question de quiz) : tuiles vides (ni numéro, ni symbole, ni nom — ils donneraient la réponse),
+   *  seule la couleur de catégorie reste ; un clic désigne un élément au lieu d'ouvrir sa fiche. */
+  pick?: { selected?: string; onPick: (name: string) => void }
 }
 
 const CATEGORY_ORDER = [
@@ -33,7 +36,7 @@ const CATEGORY_ORDER = [
  *  tuiles colorées par catégorie ; un clic ouvre la fiche. Légende cliquable : met une catégorie en
  *  évidence. Position lue dans les colonnes `groupe` / `periode` — les éléments sans groupe
  *  (lanthanides, actinides) vont sur les deux lignes du bas. */
-export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, periodColumn, onBack, onOpenFiche }: PeriodicTablePageProps) {
+export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, periodColumn, onBack, onOpenFiche, pick }: PeriodicTablePageProps) {
   const t = useT()
   const locale = useLocale()
   const data = useMemo(() => makeDatasetI18n(i18n, locale), [i18n, locale])
@@ -55,13 +58,8 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
     return CATEGORY_ORDER.filter((c) => present.has(c))
   }, [rows, tile.category])
 
-  return (
-    <section className="periodic-page">
-      <div className="stats-header">
-        <h2>{t('periodic.title')}</h2>
-        <button type="button" className="secondary" onClick={onBack}>{t('common.back')}</button>
-      </div>
-      <p>{t('periodic.hint')}</p>
+  const body = (
+    <>
       <div className="periodic-legend" role="group" aria-label={t('periodic.legend')}>
         {categories.map((c) => (
           <button
@@ -82,24 +80,39 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
           {cells.map(({ row, canonical, gridColumn, gridRow }) => {
             const category = row[tile.category] ?? ''
             const dimmed = highlight !== null && category !== highlight
+            const picked = pick?.selected === canonical
             return (
               <button
                 key={canonical}
                 type="button"
                 role="gridcell"
-                className={`element-tile ${categoryClass(category)}${dimmed ? ' is-dimmed' : ''}`}
+                className={`element-tile ${categoryClass(category)}${dimmed ? ' is-dimmed' : ''}${picked ? ' is-picked' : ''}`}
                 style={{ gridColumn, gridRow }}
-                onClick={() => onOpenFiche(canonical)}
-                aria-label={data.value(canonical)}
+                onClick={() => (pick ? pick.onPick(canonical) : onOpenFiche?.(canonical))}
+                aria-label={pick ? `${gridRow}-${gridColumn}` : data.value(canonical)}
               >
-                <span className="element-number">{row[tile.number]}</span>
-                <span className="element-symbol">{row[tile.symbol]}</span>
-                <span className="element-name">{data.value(canonical)}</span>
+                {!pick && <>
+                  <span className="element-number">{row[tile.number]}</span>
+                  <span className="element-symbol">{row[tile.symbol]}</span>
+                  <span className="element-name">{data.value(canonical)}</span>
+                </>}
               </button>
             )
           })}
         </div>
       </div>
+    </>
+  )
+
+  if (pick) return <div className="periodic-pick">{body}</div>
+  return (
+    <section className="periodic-page">
+      <div className="stats-header">
+        <h2>{t('periodic.title')}</h2>
+        <button type="button" className="secondary" onClick={onBack}>{t('common.back')}</button>
+      </div>
+      <p>{t('periodic.hint')}</p>
+      {body}
     </section>
   )
 }

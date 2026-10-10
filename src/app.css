@@ -36,3 +36,5 @@ button.element-tile:hover, button.element-tile:focus-visible { transform: scale(
 /* Le symbole n'est lisible que sur les tailles modale et bulle ; dans la grille de fiches il ne ferait que du bruit. */
 .mini-table-symbol { display: none; fill: #fff; stroke: rgba(0, 0, 0, .55); stroke-width: .5; paint-order: stroke; font-size: 3.3px; font-weight: 800; text-anchor: middle; dominant-baseline: central; }
 .fiche-modal .mini-table-symbol, .hover-preview-pop .mini-table-symbol { display: block; }
+.periodic-pick { margin-top: 1rem; }
+.element-tile.is-picked { outline: 3px solid var(--ink); outline-offset: 1px; z-index: 3; background: hsl(var(--cat) / .6); }

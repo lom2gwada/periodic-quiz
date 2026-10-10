@@ -120,9 +120,10 @@ const ficheDecor: FicheDecorator = (row, { name }) => ({
  *  éléments et certaines valeurs de cellules (catégories, états). */
 function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
   const baseSchema = { ...inferSchema(rows), noun: 'élément', title: 'Le tableau périodique des éléments' }
+  const schema = applySchemaConfig(baseSchema, schemaConfig)
   return {
     rows,
-    schema: applySchemaConfig(baseSchema, schemaConfig),
+    schema,
     i18n: elementsI18n,
     nouns: { fr: 'élément', en: 'element', es: 'elemento', nl: 'element', ht: 'eleman' },
     titles: {
@@ -135,6 +136,16 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
     ficheDecor,
     speech,
     intro: buildIntro(rows.length),
+    // « Cliquez sur X » : tous les éléments qui ont une case sur le tableau (position lue dans groupe/période).
+    map: {
+      kind: 'table',
+      targets: rows
+        .filter((row) => elementPosition(Number(row[COLUMNS.number]), Number(row[COLUMNS.group]), Number(row[COLUMNS.period])))
+        .map((row) => row[schema.subjectColumn] ?? ''),
+      render: ({ selected, onPick }) => (
+        <PeriodicTablePage rows={rows} schema={schema} i18n={elementsI18n} tile={COLUMNS} groupColumn={COLUMNS.group} periodColumn={COLUMNS.period} pick={{ selected, onPick }} />
+      ),
+    },
     views: [{
       id: 'table',
       icon: '🧪',

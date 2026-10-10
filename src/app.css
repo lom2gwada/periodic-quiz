@@ -38,3 +38,8 @@ button.element-tile:hover, button.element-tile:focus-visible { transform: scale(
 .fiche-modal .mini-table-symbol, .hover-preview-pop .mini-table-symbol { display: block; }
 .periodic-pick { margin-top: 1rem; }
 .element-tile.is-picked { outline: 3px solid var(--ink); outline-offset: 1px; z-index: 3; background: hsl(var(--cat) / .6); }
+/* Question « Cliquez sur X » : les tuiles sont vides, donc le tableau rétrécit pour tenir dans la carte (pas de défilement horizontal). */
+.periodic-pick .periodic-scroll { overflow-x: visible; }
+.periodic-pick .periodic-grid { grid-template-columns: repeat(18, minmax(0, 1fr)); gap: clamp(1px, .4vw, .25rem); min-width: 0; }
+.periodic-pick .element-tile { padding: 0; border-radius: clamp(2px, .5vw, .4rem); }
+.periodic-pick .periodic-placeholder { overflow: hidden; border-radius: clamp(2px, .5vw, .4rem); font-size: clamp(.3rem, 1.3vw, .62rem); }

@@ -18,9 +18,10 @@ describe('makeDatasetI18n', () => {
     expect(en.label('masse volumique')).toBe('density')
   })
 
-  it('keeps names that are identical in both languages, and falls back to French for es/nl/ht', () => {
+  it('keeps names that are identical in both languages, and falls back to French for a locale without translations', () => {
     expect(makeDatasetI18n(elementsI18n, 'en').value('Lithium')).toBe('Lithium')
-    expect(makeDatasetI18n(elementsI18n, 'es').value('Hydrogène')).toBe('Hydrogène')
+    expect(makeDatasetI18n(elementsI18n, 'nl').value('Calcium')).toBe('Calcium')
+    expect(makeDatasetI18n(elementsI18n, 'de').value('Hydrogène')).toBe('Hydrogène')
   })
 
   it('applies the French label corrections (accents)', () => {

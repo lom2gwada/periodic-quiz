@@ -27,8 +27,7 @@ const remote = createRemoteDataset({
 
 /** Ce que le bouton « Écouter » d'une fiche déclame (syntaxe : voir `SpeechTemplates` dans le moteur). Une phrase saute
  *  quand la donnée manque (pas de masse volumique pour un gaz, pas de date de découverte pour les éléments antiques…).
- *  Français et anglais, les seules langues où les noms d'éléments sont traduits ; les autres langues sont lues en
- *  français. Unités écrites en toutes lettres. Volontairement absents : configuration électronique et états
+ *  Les cinq langues de l'appli (créole haïtien : première version, lue par la voix française). Unités écrites en toutes lettres. Volontairement absents : configuration électronique et états
  *  d'oxydation (« [Ar]4s2 3d6 », « +2|+3 ») que la voix lirait mal. */
 const speech: SpeechTemplates = {
   fr: [
@@ -55,12 +54,48 @@ const speech: SpeechTemplates = {
     'Its density is {masse_volumique_g_cm3} grams per cubic centimetre.',
     'It was discovered in {annee_decouverte}.',
   ],
+  es: [
+    '{Name}, símbolo {symbole}, número atómico {numero_atomique}.',
+    'Es un elemento de la categoría {categorie}.',
+    'Se encuentra en el período {periode}[ y en el grupo {groupe}].',
+    'Su masa atómica es de {masse_atomique_u} unidades de masa atómica.',
+    'A temperatura ambiente, es un {etat}.',
+    'Su electronegatividad es de {electronegativite}.',
+    'Su punto de fusión es de {point_fusion_c} grados Celsius.',
+    'Su punto de ebullición es de {point_ebullition_c} grados Celsius.',
+    'Su densidad es de {masse_volumique_g_cm3} gramos por centímetro cúbico.',
+    'Fue descubierto en {annee_decouverte}.',
+  ],
+  nl: [
+    '{Name}, symbool {symbole}, atoomnummer {numero_atomique}.',
+    'Het is een element uit de categorie {categorie}.',
+    'Het staat in periode {periode}[ en groep {groupe}].',
+    'De atoommassa is {masse_atomique_u} atomaire massa-eenheden.',
+    'Bij kamertemperatuur is de toestand: {etat}.',
+    'De elektronegativiteit is {electronegativite}.',
+    'Het smeltpunt is {point_fusion_c} graden Celsius.',
+    'Het kookpunt is {point_ebullition_c} graden Celsius.',
+    'De dichtheid is {masse_volumique_g_cm3} gram per kubieke centimeter.',
+    'Het werd ontdekt in {annee_decouverte}.',
+  ],
+  // Première version, à faire relire par un locuteur natif. Pas de voix créole : la voix française lit ce texte.
+  ht: [
+    '{Name}, senbòl {symbole}, nimewo atomik {numero_atomique}.',
+    'Se yon eleman nan kategori {categorie}.',
+    'Li nan peryòd {periode}[ ak nan gwoup {groupe}].',
+    'Mas atomik li se {masse_atomique_u} inite mas atomik.',
+    'A tanperati anbyant, eta li se {etat}.',
+    'Elektwonegativite li se {electronegativite}.',
+    'Pwen fizyon li se {point_fusion_c} degre Selsiyis.',
+    'Pwen bouyi li se {point_ebullition_c} degre Selsiyis.',
+    'Dansite li se {masse_volumique_g_cm3} gram pou chak santimèt kib.',
+    'Yo te dekouvri li an {annee_decouverte}.',
+  ],
 }
 
 // Présentation générale du tableau (bouton « Écouter » de la page d'accueil, pas d'une fiche) :
 // origine, principe de classement, grandes familles. `{COUNT}` est remplacé par le nombre réel
-// d'éléments (`buildIntro`) pour ne pas se désynchroniser du CSV. Français et anglais seulement,
-// comme `speech` ci-dessus (les autres langues n'ont pas de noms d'éléments traduits).
+// d'éléments (`buildIntro`) pour ne pas se désynchroniser du CSV. Mêmes langues que `speech` ci-dessus.
 const introTemplate: SpeechTemplates = {
   fr: [
     "Le tableau périodique classe tous les éléments chimiques connus, du plus léger à l'atome le plus lourd jamais synthétisé.",
@@ -81,6 +116,37 @@ const introTemplate: SpeechTemplates = {
     'Some elements have existed since the Earth formed; others have only ever been created in a laboratory, sometimes just a few atoms at a time.',
     'Today, {COUNT} elements are officially recognized by the International Union of Pure and Applied Chemistry.',
     'This quiz explores each of them: its symbol, its mass, its category, and much more.',
+  ],
+  es: [
+    'La tabla periódica clasifica todos los elementos químicos conocidos, desde el más ligero hasta el átomo más pesado jamás sintetizado.',
+    'Fue ideada en 1869 por el químico ruso Dmitri Mendeléyev, quien observó que las propiedades de los elementos se repiten siguiendo un patrón regular.',
+    'Cada elemento está ordenado por número atómico creciente — el número de protones de su núcleo.',
+    'Las filas se llaman períodos y las columnas grupos: dos elementos del mismo grupo suelen tener propiedades químicas parecidas.',
+    'La tabla distingue además grandes familias, como los metales, los no metales, los metaloides o los gases nobles.',
+    'Algunos elementos existen desde la formación de la Tierra; otros solo se han creado en laboratorio, a veces unos pocos átomos a la vez.',
+    'Hoy, {COUNT} elementos están oficialmente reconocidos por la Unión Internacional de Química Pura y Aplicada.',
+    'Este quiz explora cada uno de ellos: su símbolo, su masa, su categoría y mucho más.',
+  ],
+  nl: [
+    'Het periodiek systeem ordent alle bekende scheikundige elementen, van het lichtste tot het zwaarste atoom dat ooit is gesynthetiseerd.',
+    'Het werd in 1869 bedacht door de Russische scheikundige Dmitri Mendelejev, die zag dat de eigenschappen van de elementen zich volgens een regelmatig patroon herhalen.',
+    'Elk element staat op volgorde van oplopend atoomnummer — het aantal protonen in zijn kern.',
+    'De rijen heten perioden, de kolommen groepen: twee elementen in dezelfde groep hebben vaak vergelijkbare chemische eigenschappen.',
+    'Het systeem onderscheidt ook grote families, zoals metalen, niet-metalen, metalloïden en edelgassen.',
+    'Sommige elementen bestaan sinds de vorming van de aarde; andere zijn alleen in een laboratorium gemaakt, soms maar een paar atomen tegelijk.',
+    'Vandaag de dag worden {COUNT} elementen officieel erkend door de Internationale Unie voor Zuivere en Toegepaste Chemie.',
+    'Deze quiz verkent ze stuk voor stuk: hun symbool, hun massa, hun categorie en nog veel meer.',
+  ],
+  // Première version, à faire relire par un locuteur natif.
+  ht: [
+    'Tablo peryodik la klase tout eleman chimik yo konnen, depi pi lejè a rive nan atòm ki pi lou a yo janm sentetize.',
+    'Se chimis larisi a, Dmitri Mendeleyev, ki te kreye l an 1869, paske li te remake pwopriyete eleman yo repete selon yon modèl regilye.',
+    'Chak eleman klase selon nimewo atomik li k ap monte — kantite pwoton ki nan nwayo li.',
+    'Liy yo rele peryòd, kolòn yo rele gwoup: de eleman ki nan menm gwoup souvan gen pwopriyete chimik ki sanble.',
+    'Tablo a fè distenksyon tou ant gwo fanmi tankou metal, non-metal, metaloyid ak gaz nòb.',
+    'Gen eleman ki egziste depi Latè fòme; gen lòt yo fèt sèlman nan laboratwa, pafwa kèk atòm sèlman alafwa.',
+    'Jodi a, {COUNT} eleman ofisyèlman rekonèt pa Inyon Entènasyonal Chimi Pi ak Aplike.',
+    'Kiz sa a eksplore chak nan yo: senbòl yo, mas yo, kategori yo, ak plis toujou.',
   ],
 }
 
@@ -131,6 +197,7 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
       en: 'The periodic table of elements',
       es: 'La tabla periódica de los elementos',
       nl: 'Het periodiek systeem der elementen',
+      ht: 'Tablo peryodik eleman yo',
     },
     editable: true,
     ficheDecor,

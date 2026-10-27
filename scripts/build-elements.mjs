@@ -46,7 +46,14 @@ function parseCsv(text) {
 const [head, ...body] = parseCsv(fs.readFileSync(SRC, 'utf8'))
 const idx = Object.fromEntries(head.map((h, i) => [h, i]))
 const num = (s) => { const n = Number(String(s ?? '').replace(/[\[\]]/g, '')); return Number.isFinite(n) && String(s ?? '').trim() !== '' ? n : null }
-const kToC = (k) => (num(k) == null ? '' : String(Math.round((num(k) - 273.15) * 100) / 100))
+// PubChem donne des kelvins : entiers pour la plupart (1615 K), décimaux quand la mesure l'est (13,81 K). Un kelvin entier devient un °C entier
+// (1615 K → 1342 °C, et non « 1341.85 », fausse précision) ; un kelvin décimal garde ses deux décimales.
+const kToC = (k) => {
+  const n = num(k)
+  if (n == null) return ''
+  const c = n - 273.15
+  return String(Number.isInteger(n) ? Math.round(c) : Math.round(c * 100) / 100)
+}
 
 const outHead = ['element', 'article', 'symbole', 'numero_atomique', 'masse_atomique_u', 'categorie', 'groupe', 'periode', 'etat',
   'electronegativite', 'point_fusion_c', 'point_ebullition_c', 'masse_volumique_g_cm3', 'annee_decouverte', 'configuration_electronique', 'etats_oxydation']

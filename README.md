@@ -13,7 +13,9 @@ Quiz sur le **tableau périodique des éléments** (118 éléments), construit s
 
 ## Données
 
-[`src/data/elements.csv`](src/data/elements.csv) est généré par [`scripts/build-elements.mjs`](scripts/build-elements.mjs) à partir du [tableau périodique PubChem](https://pubchem.ncbi.nlm.nih.gov/periodic-table/) (NCBI, données libres de droits), complété par les noms français, le groupe/la période et les catégories en français. Températures converties en °C ; masse volumique laissée vide pour les gaz. Les traductions anglaises ([`src/data/elements.i18n.ts`](src/data/elements.i18n.ts)) sont générées par [`scripts/build-elements-i18n.mjs`](scripts/build-elements-i18n.mjs).
+[`src/data/elements.csv`](src/data/elements.csv) est généré par [`scripts/build-elements.mjs`](scripts/build-elements.mjs) à partir du [tableau périodique PubChem](https://pubchem.ncbi.nlm.nih.gov/periodic-table/) (NCBI, données libres de droits), complété par les noms français, le groupe/la période et les catégories en français. Températures converties en °C : PubChem les donne en kelvins, entiers pour la plupart — un kelvin entier devient un °C entier (1615 K → 1342 °C, pas « 1341,85 »), un kelvin décimal garde ses deux décimales ; masse volumique laissée vide pour les gaz.
+
+**Sources et dates** : extraction PubChem du 19/09/2026 (création du jeu de données) ; masses atomiques alignées le 28/10/2026 sur les poids atomiques standard de l'IUPAC (forme abrégée) quand la cellule était plus arrondie que la source — jamais l'inverse ; températures arrondies à l'unité le 28/10/2026 (voir ci-dessus). La table Supabase `periodic_elements` est le miroir éditable de ce fichier et doit être mise à jour en même temps. Les traductions anglaises ([`src/data/elements.i18n.ts`](src/data/elements.i18n.ts)) sont générées par [`scripts/build-elements-i18n.mjs`](scripts/build-elements-i18n.mjs).
 
 Régénérer :
 

@@ -1,5 +1,5 @@
 import { HoverPreview, applySchemaConfig, createRemoteDataset, inferSchema, useT } from '@engine'
-import type { Dataset, FicheDecorator, QuizAppSpec, Row, SchemaConfig, SpeechTemplates } from '@engine'
+import type { CategoryGroup, Dataset, FicheDecorator, QuizAppSpec, Row, SchemaConfig, SpeechTemplates } from '@engine'
 import elementsCsv from './data/elements.csv?raw'
 import { elementsI18n } from './data/elements.i18n'
 import { PeriodicBackground } from './components/PeriodicBackground'
@@ -7,6 +7,31 @@ import { MiniPeriodicTable } from './components/MiniPeriodicTable'
 import { PeriodicTablePage } from './components/PeriodicTablePage'
 import { categoryClass } from './utils/elementCategory'
 import { elementPosition } from './utils/elementPosition'
+
+/** Regroupement des catégories sur l'accueil (une catégorie = une colonne du CSV, plus `map` pour la question « Position »).
+ *  Une colonne ajoutée plus tard et non citée ici apparaît dans « Autres » : rien ne disparaît. */
+const categoryGroups: CategoryGroup[] = [
+  {
+    id: 'identite',
+    labels: { fr: 'Identité', en: 'Identity', es: 'Identidad', nl: 'Identiteit', ht: 'Idantite' },
+    categories: ['symbole', 'numero_atomique', 'annee_decouverte'],
+  },
+  {
+    id: 'classification',
+    labels: { fr: 'Classification', en: 'Classification', es: 'Clasificación', nl: 'Indeling', ht: 'Klasman' },
+    categories: ['categorie', 'groupe', 'periode', 'map'],
+  },
+  {
+    id: 'physique',
+    labels: { fr: 'Propriétés physiques', en: 'Physical properties', es: 'Propiedades físicas', nl: 'Fysische eigenschappen', ht: 'Pwopriyete fizik' },
+    categories: ['masse_atomique_u', 'etat', 'point_fusion_c', 'point_ebullition_c', 'masse_volumique_g_cm3'],
+  },
+  {
+    id: 'chimie',
+    labels: { fr: 'Propriétés chimiques', en: 'Chemical properties', es: 'Propiedades químicas', nl: 'Chemische eigenschappen', ht: 'Pwopriyete chimik' },
+    categories: ['electronegativite', 'configuration_electronique', 'etats_oxydation'],
+  },
+]
 
 /** Colonnes symbole / numéro / catégorie / groupe / période (tuiles de fiche et vue Tableau) : le jeu
  *  de données embarqué en a, un CSV importé non. */
@@ -202,6 +227,7 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
     editable: true,
     ficheDecor,
     speech,
+    categoryGroups,
     intro: buildIntro(rows.length),
     // « Cliquez sur X » : tous les éléments qui ont une case sur le tableau (position lue dans groupe/période).
     map: {

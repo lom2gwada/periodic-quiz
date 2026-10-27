@@ -1,4 +1,5 @@
 import type { DataI18n } from '@engine'
+import { formatConfiguration } from '../utils/electronConfig'
 
 // Traductions du jeu de données des éléments. Source = `elements.csv` (français). On ne liste que ce
 // qui diffère réellement du français. Locales : en, es, nl, ht (le créole : première version, à faire relire
@@ -284,4 +285,4 @@ const columnLabels: DataI18n['columnLabels'] = {
   'etats oxydation': { fr: "états d'oxydation", en: 'oxidation states', es: 'estados de oxidación', nl: 'oxidatietoestanden', ht: 'eta oksidasyon' },
 }
 
-export const elementsI18n: DataI18n = { values, articles, columnLabels, commonNouns: true }
+export const elementsI18n: DataI18n = { values, articles, columnLabels, commonNouns: true, formatValue: formatConfiguration }

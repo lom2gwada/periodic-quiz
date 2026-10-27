@@ -7,7 +7,7 @@ import { MiniPeriodicTable } from './components/MiniPeriodicTable'
 import { PeriodicTablePage } from './components/PeriodicTablePage'
 import { categoryClass } from './utils/elementCategory'
 import { elementPosition } from './utils/elementPosition'
-import { configurationAliases } from './utils/electronConfig'
+import { configurationAliases, matchConfiguration } from './utils/electronConfig'
 
 /** Regroupement des catégories sur l'accueil (une catégorie = une colonne du CSV, plus `map` pour la question « Position »).
  *  Une colonne ajoutée plus tard et non citée ici apparaît dans « Autres » : rien ne disparaît. */
@@ -229,6 +229,8 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
     },
     editable: true,
     ficheDecor,
+    // Configuration électronique : comparée par ensemble de sous-couches (ordre, espaces et exposants Unicode indifférents).
+    answerMatchers: { [COLUMNS.configuration]: matchConfiguration },
     // « [Ar]4s2 3d6 » tapé au clavier est accepté en plus de « [Ar] 4s² 3d⁶ » (la donnée reste en ASCII).
     aliases: Object.fromEntries([...new Set(rows.map((row) => row[COLUMNS.configuration] ?? '').filter(Boolean))].map((value) => [value, configurationAliases(value)]).filter(([, forms]) => forms.length)),
     // Ordre naturel des éléments : par numéro atomique (page Fiches et fiche précédente / suivante).

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { makeDatasetI18n, useLocale, useT } from '@engine'
 import type { DataI18n, GenSchema, Row } from '@engine'
 import { categoryClass } from '../utils/elementCategory'
@@ -41,6 +41,21 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
   const locale = useLocale()
   const data = useMemo(() => makeDatasetI18n(i18n, locale), [i18n, locale])
   const [highlight, setHighlight] = useState<string | null>(null)
+  // Quand le tableau dépasse la largeur disponible (téléphone), il défile : ombres aux bords concernés et consigne « faites glisser ».
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [more, setMore] = useState({ left: false, right: false })
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const update = () => setMore({ left: el.scrollLeft > 2, right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2 })
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(update) : null
+    observer?.observe(el)
+    return () => { el.removeEventListener('scroll', update); observer?.disconnect() }
+  }, [rows.length])
+  // Hors question « Cliquez sur X », une rangée et une colonne d'en-têtes (groupes 1-18, périodes 1-7) décalent la grille d'un cran.
+  const offset = pick ? 0 : 1
 
   const cells = useMemo(() => {
     const items = rows.map((row) => {
@@ -73,10 +88,14 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
           </button>
         ))}
       </div>
-      <div className="periodic-scroll">
-        <div className="periodic-grid" role="grid" aria-label={t('periodic.title')}>
-          <span className="periodic-placeholder" style={{ gridColumn: 3, gridRow: 6 }} aria-hidden="true">57–71</span>
-          <span className="periodic-placeholder" style={{ gridColumn: 3, gridRow: 7 }} aria-hidden="true">89–103</span>
+      {!pick && (more.left || more.right) && <p className="periodic-scroll-hint">{t('periodic.scrollHint')}</p>}
+      <div className={`periodic-scroll-wrap${more.left ? ' more-left' : ''}${more.right ? ' more-right' : ''}`}>
+      <div className="periodic-scroll" ref={scrollRef}>
+        <div className={pick ? 'periodic-grid' : 'periodic-grid has-axes'} role="grid" aria-label={t('periodic.title')}>
+          {!pick && Array.from({ length: 18 }, (_, index) => <span key={`g${index}`} className="periodic-axis" style={{ gridColumn: index + 2, gridRow: 1 }} aria-hidden="true">{index + 1}</span>)}
+          {!pick && Array.from({ length: 7 }, (_, index) => <span key={`p${index}`} className="periodic-axis" style={{ gridColumn: 1, gridRow: index + 2 }} aria-hidden="true">{index + 1}</span>)}
+          <span className="periodic-placeholder" style={{ gridColumn: 3 + offset, gridRow: 6 + offset }} aria-hidden="true">57–71</span>
+          <span className="periodic-placeholder" style={{ gridColumn: 3 + offset, gridRow: 7 + offset }} aria-hidden="true">89–103</span>
           {cells.map(({ row, canonical, gridColumn, gridRow }) => {
             const category = row[tile.category] ?? ''
             const dimmed = highlight !== null && category !== highlight
@@ -87,9 +106,10 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
                 type="button"
                 role="gridcell"
                 className={`element-tile ${categoryClass(category)}${dimmed ? ' is-dimmed' : ''}${picked ? ' is-picked' : ''}`}
-                style={{ gridColumn, gridRow }}
+                style={{ gridColumn: gridColumn + offset, gridRow: gridRow + offset }}
                 onClick={() => (pick ? pick.onPick(canonical) : onOpenFiche?.(canonical))}
                 aria-label={pick ? `${gridRow}-${gridColumn}` : data.value(canonical)}
+                title={pick ? undefined : data.value(canonical)}
               >
                 {!pick && <>
                   <span className="element-number">{row[tile.number]}</span>
@@ -100,6 +120,7 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
             )
           })}
         </div>
+      </div>
       </div>
     </>
   )

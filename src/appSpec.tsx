@@ -196,6 +196,8 @@ function TablePosition({ row, name }: { row: Row; name: string }) {
 
 /** Tuile symbole/numéro à gauche du nom, mini tableau périodique à droite. */
 const ficheDecor: FicheDecorator = (row, { name }) => ({
+  // « Hierro », pas « el Hierro » : l'article de la colonne `article` sert aux phrases, pas au titre.
+  hideArticle: true,
   trail: <TablePosition row={row} name={name} />,
   lead: (
     <span className={`element-tile fiche-tile ${categoryClass(row[COLUMNS.category] ?? '')}`} aria-hidden="true">
@@ -226,6 +228,8 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
     },
     editable: true,
     ficheDecor,
+    // Ordre naturel des éléments : par numéro atomique (page Fiches et fiche précédente / suivante).
+    atlasSort: { column: COLUMNS.number, direction: 'asc' },
     speech,
     categoryGroups,
     intro: buildIntro(rows.length),

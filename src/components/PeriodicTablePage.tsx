@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { makeDatasetI18n, useLocale, useT } from '@engine'
+import { storageKey } from '@engine/config'
 import type { DataI18n, GenSchema, Row } from '@engine'
 import { categoryClass } from '../utils/elementCategory'
 import { elementPosition } from '../utils/elementPosition'
@@ -54,8 +55,16 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
     observer?.observe(el)
     return () => { el.removeEventListener('scroll', update); observer?.disconnect() }
   }, [rows.length])
-  // Hors question « Cliquez sur X », une rangée et une colonne d'en-têtes (groupes 1-18, périodes 1-7) décalent la grille d'un cran.
-  const offset = pick ? 0 : 1
+  // Une rangée et une colonne d'en-têtes (groupes 1-18, périodes 1-7) décalent la grille d'un cran.
+  const offset = 1
+  // Question « Cliquez sur X » : option « sans indice de couleur » (mémorisée) — la couleur de catégorie et la légende donnent sinon
+  // la réponse à qui connaît les familles d'éléments (le sodium est dans la colonne rouge des métaux alcalins).
+  const [noColors, setNoColors] = useState(() => { try { return localStorage.getItem(storageKey('pick-no-colors')) === '1' } catch { return false } })
+  const toggleColors = (checked: boolean) => { setNoColors(checked); try { localStorage.setItem(storageKey('pick-no-colors'), checked ? '1' : '0') } catch { /* non bloquant */ } }
+  // Nom accessible d'une case sans nommer l'élément : « Période 3, groupe 1 » ; bloc f : « Période 6, bloc f, position 3 ».
+  const cellName = (column: number, row: number) => row >= 9
+    ? t('periodic.cellLabelF', { period: row - 3, n: column - 2 })
+    : t('periodic.cellLabel', { period: row, group: column })
 
   const cells = useMemo(() => {
     const items = rows.map((row) => {
@@ -68,6 +77,8 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
     return items.filter((c) => c.ok)
   }, [rows, schema.subjectColumn, tile.number, groupColumn, periodColumn])
 
+  const pickedCell = pick?.selected ? cells.find((cell) => cell.canonical === pick.selected) : undefined
+
   const categories = useMemo(() => {
     const present = new Set(rows.map((r) => r[tile.category]).filter(Boolean))
     return CATEGORY_ORDER.filter((c) => present.has(c))
@@ -75,7 +86,8 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
 
   const body = (
     <>
-      <div className="periodic-legend" role="group" aria-label={t('periodic.legend')}>
+      {pick && <label className="periodic-toggle"><input type="checkbox" checked={noColors} onChange={(event) => toggleColors(event.target.checked)} /> {t('periodic.noColors')}</label>}
+      {!(pick && noColors) && <div className="periodic-legend" role="group" aria-label={t('periodic.legend')}>
         {categories.map((c) => (
           <button
             key={c}
@@ -87,13 +99,14 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
             {data.value(c)}
           </button>
         ))}
-      </div>
-      {!pick && (more.left || more.right) && <p className="periodic-scroll-hint">{t('periodic.scrollHint')}</p>}
+      </div>}
+      {pick && <p className="periodic-selection" role="status">{pickedCell ? t('periodic.selected', { cell: cellName(pickedCell.gridColumn, pickedCell.gridRow) }) : t('periodic.noSelection')}</p>}
+      {(more.left || more.right) && <p className="periodic-scroll-hint">{t('periodic.scrollHint')}</p>}
       <div className={`periodic-scroll-wrap${more.left ? ' more-left' : ''}${more.right ? ' more-right' : ''}`}>
       <div className="periodic-scroll" ref={scrollRef}>
-        <div className={pick ? 'periodic-grid' : 'periodic-grid has-axes'} role="grid" aria-label={t('periodic.title')}>
-          {!pick && Array.from({ length: 18 }, (_, index) => <span key={`g${index}`} className="periodic-axis" style={{ gridColumn: index + 2, gridRow: 1 }} aria-hidden="true">{index + 1}</span>)}
-          {!pick && Array.from({ length: 7 }, (_, index) => <span key={`p${index}`} className="periodic-axis" style={{ gridColumn: 1, gridRow: index + 2 }} aria-hidden="true">{index + 1}</span>)}
+        <div className="periodic-grid has-axes" role="grid" aria-label={t('periodic.title')}>
+          {Array.from({ length: 18 }, (_, index) => <span key={`g${index}`} className="periodic-axis" style={{ gridColumn: index + 2, gridRow: 1 }} aria-hidden="true">{index + 1}</span>)}
+          {Array.from({ length: 7 }, (_, index) => <span key={`p${index}`} className="periodic-axis" style={{ gridColumn: 1, gridRow: index + 2 }} aria-hidden="true">{index + 1}</span>)}
           <span className="periodic-placeholder" style={{ gridColumn: 3 + offset, gridRow: 6 + offset }} aria-hidden="true">57–71</span>
           <span className="periodic-placeholder" style={{ gridColumn: 3 + offset, gridRow: 7 + offset }} aria-hidden="true">89–103</span>
           {cells.map(({ row, canonical, gridColumn, gridRow }) => {
@@ -108,7 +121,8 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
                 className={`element-tile ${categoryClass(category)}${dimmed ? ' is-dimmed' : ''}${picked ? ' is-picked' : ''}`}
                 style={{ gridColumn: gridColumn + offset, gridRow: gridRow + offset }}
                 onClick={() => (pick ? pick.onPick(canonical) : onOpenFiche?.(canonical))}
-                aria-label={pick ? `${gridRow}-${gridColumn}` : data.value(canonical)}
+                aria-label={pick ? cellName(gridColumn, gridRow) : data.value(canonical)}
+                aria-selected={pick ? picked : undefined}
                 title={pick ? undefined : data.value(canonical)}
               >
                 {!pick && <>
@@ -125,7 +139,7 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
     </>
   )
 
-  if (pick) return <div className="periodic-pick">{body}</div>
+  if (pick) return <div className={noColors ? 'periodic-pick no-colors' : 'periodic-pick'}>{body}</div>
   return (
     <section className="periodic-page">
       <div className="stats-header">

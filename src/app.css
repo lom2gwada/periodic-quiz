@@ -51,7 +51,12 @@ button.element-tile:hover, button.element-tile:focus-visible { transform: scale(
 .periodic-pick { margin-top: 1rem; }
 .element-tile.is-picked { outline: 3px solid var(--ink); outline-offset: 1px; z-index: 3; background: hsl(var(--cat) / .6); }
 /* Question « Cliquez sur X » : les tuiles sont vides, donc le tableau rétrécit pour tenir dans la carte (pas de défilement horizontal). */
-.periodic-pick .periodic-scroll { overflow-x: visible; }
-.periodic-pick .periodic-grid { grid-template-columns: repeat(18, minmax(0, 1fr)); gap: clamp(1px, .4vw, .25rem); min-width: 0; }
+.periodic-pick .periodic-grid { grid-template-columns: 1.1rem repeat(18, minmax(0, 1fr)); gap: clamp(1px, .4vw, .25rem); }
+/* Petit écran : cases tactiles de 2,75 rem (44 px) ; le tableau défile alors horizontalement (ombres + consigne). */
+@container (max-width: 40rem) { .periodic-pick .periodic-grid { grid-template-columns: 1.1rem repeat(18, 2.75rem); gap: .2rem; } }
+.periodic-toggle { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; color: var(--text-soft); font-size: .85rem; cursor: pointer; }
+.periodic-selection { margin: .8rem 0 0; color: var(--text-soft); font-size: .88rem; }
+.periodic-pick.no-colors .element-tile { background: var(--surface-alt); border-color: var(--border); }
+.periodic-pick.no-colors .element-tile.is-picked { background: var(--surface-selected); border-color: var(--ink); }
 .periodic-pick .element-tile { padding: 0; border-radius: clamp(2px, .5vw, .4rem); }
 .periodic-pick .periodic-placeholder { overflow: hidden; border-radius: clamp(2px, .5vw, .4rem); font-size: clamp(.3rem, 1.3vw, .62rem); }

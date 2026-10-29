@@ -11,6 +11,8 @@ export const messages: Record<string, Record<string, string>> = {
     'periodic.cellLabelF': "Période {period}, bloc f, position {n}",
     'periodic.selected': "Sélection : {cell}.",
     'periodic.noSelection': "Aucune case sélectionnée : touchez-en une, vous pourrez la changer avant de passer à la suite.",
+    'periodic.reviewTarget': "Bonne case",
+    'periodic.reviewWrong': "Votre réponse",
     'periodic.noColors': "Sans indice de couleur",
   },
   en: {
@@ -24,6 +26,8 @@ export const messages: Record<string, Record<string, string>> = {
     'periodic.cellLabelF': "Period {period}, f-block, position {n}",
     'periodic.selected': "Selected: {cell}.",
     'periodic.noSelection': "No cell selected: tap one, you can change it before moving on.",
+    'periodic.reviewTarget': "Correct cell",
+    'periodic.reviewWrong': "Your answer",
     'periodic.noColors': "No colour hints",
   },
   es: {
@@ -37,6 +41,8 @@ export const messages: Record<string, Record<string, string>> = {
     'periodic.cellLabelF': "Período {period}, bloque f, posición {n}",
     'periodic.selected': "Selección: {cell}.",
     'periodic.noSelection': "Ninguna casilla seleccionada: toca una, podrás cambiarla antes de continuar.",
+    'periodic.reviewTarget': "Casilla correcta",
+    'periodic.reviewWrong': "Tu respuesta",
     'periodic.noColors': "Sin pistas de color",
   },
   nl: {
@@ -50,6 +56,8 @@ export const messages: Record<string, Record<string, string>> = {
     'periodic.cellLabelF': "Periode {period}, f-blok, positie {n}",
     'periodic.selected': "Selectie: {cell}.",
     'periodic.noSelection': "Geen vak geselecteerd: tik op een vak, je kunt het wijzigen voordat je verdergaat.",
+    'periodic.reviewTarget': "Juiste vak",
+    'periodic.reviewWrong': "Jouw antwoord",
     'periodic.noColors': "Zonder kleurhints",
   },
   ht: {
@@ -63,6 +71,8 @@ export const messages: Record<string, Record<string, string>> = {
     'periodic.cellLabelF': "Peryòd {period}, blòk f, pozisyon {n}",
     'periodic.selected': "Seleksyon : {cell}.",
     'periodic.noSelection': "Pa gen okenn kaz chwazi : touche youn, ou ka chanje l anvan ou kontinye.",
+    'periodic.reviewTarget': "Bon kaz la",
+    'periodic.reviewWrong': "Repons ou",
     'periodic.noColors': "San endis koulè",
   },
 }

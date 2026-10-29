@@ -51,6 +51,15 @@ button.element-tile:hover, button.element-tile:focus-visible { transform: scale(
 .periodic-pick { margin-top: 1rem; }
 .element-tile.is-picked { outline: 3px solid var(--ink); outline-offset: 1px; z-index: 3; background: hsl(var(--cat) / .6); }
 /* Question « Cliquez sur X » : les tuiles sont vides, donc le tableau rétrécit pour tenir dans la carte (pas de défilement horizontal). */
+.periodic-pick.is-review .element-tile { cursor: default; }
+.periodic-pick.is-review .element-tile:not(.is-target):not(.is-wrong) { opacity: .45; }
+.element-tile.is-target { outline: 3px solid var(--success); outline-offset: 1px; z-index: 3; opacity: 1; }
+.element-tile.is-wrong { outline: 3px solid var(--error); outline-offset: 1px; z-index: 3; opacity: 1; }
+.periodic-pick.is-review .element-tile.is-target .element-symbol, .periodic-pick.is-review .element-tile.is-wrong .element-symbol { font-size: clamp(.6rem, 1.9vw, 1.05rem); }
+.periodic-pick.is-review .element-tile.is-target .element-number, .periodic-pick.is-review .element-tile.is-wrong .element-number { font-size: clamp(.4rem, 1.1vw, .65rem); }
+.periodic-review-legend { margin: .6rem 0 0; color: var(--text-soft); font-size: .85rem; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.periodic-review-legend .swatch { display: inline-block; width: .8rem; height: .8rem; border-radius: .2rem; border: 3px solid var(--success); }
+.periodic-review-legend .swatch.is-wrong { border-color: var(--error); }
 .periodic-pick .periodic-grid { grid-template-columns: 1.1rem repeat(18, minmax(0, 1fr)); gap: clamp(1px, .4vw, .25rem); }
 /* Petit écran : cases tactiles de 2,75 rem (44 px) ; le tableau défile alors horizontalement (ombres + consigne). */
 @container (max-width: 40rem) { .periodic-pick .periodic-grid { grid-template-columns: 1.1rem repeat(18, 2.75rem); gap: .2rem; } }

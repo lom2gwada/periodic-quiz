@@ -25,7 +25,7 @@ interface PeriodicTablePageProps {
   onOpenFiche?: (name: string) => void
   /** Mode « Cliquez sur X » (question de quiz) : tuiles vides (ni numéro, ni symbole, ni nom — ils donneraient la réponse),
    *  seule la couleur de catégorie reste ; un clic désigne un élément au lieu d'ouvrir sa fiche. */
-  pick?: { selected?: string; onPick: (name: string) => void }
+  pick?: { selected?: string; onPick: (name: string) => void; /** Correction : la bonne case et la réponse donnée sont révélées, le tableau n'est plus cliquable. */ review?: { target: string } }
 }
 
 const CATEGORY_ORDER = [
@@ -77,6 +77,16 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
     return items.filter((c) => c.ok)
   }, [rows, schema.subjectColumn, tile.number, groupColumn, periodColumn])
 
+  const review = pick?.review
+  const targetRef = useRef<HTMLButtonElement>(null)
+  // Sur téléphone le tableau défile : on amène la bonne case dans la zone visible (défilement horizontal du seul tableau, pas de la page).
+  useEffect(() => {
+    const wrap = scrollRef.current
+    const tileEl = targetRef.current
+    if (!review || !wrap || !tileEl) return
+    wrap.scrollLeft = Math.max(0, tileEl.offsetLeft - (wrap.clientWidth - tileEl.offsetWidth) / 2)
+  }, [review, cells])
+
   const pickedCell = pick?.selected ? cells.find((cell) => cell.canonical === pick.selected) : undefined
 
   const categories = useMemo(() => {
@@ -86,8 +96,8 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
 
   const body = (
     <>
-      {pick && <label className="periodic-toggle"><input type="checkbox" checked={noColors} onChange={(event) => toggleColors(event.target.checked)} /> {t('periodic.noColors')}</label>}
-      {!(pick && noColors) && <div className="periodic-legend" role="group" aria-label={t('periodic.legend')}>
+      {pick && !review && <label className="periodic-toggle"><input type="checkbox" checked={noColors} onChange={(event) => toggleColors(event.target.checked)} /> {t('periodic.noColors')}</label>}
+      {!review && !(pick && noColors) && <div className="periodic-legend" role="group" aria-label={t('periodic.legend')}>
         {categories.map((c) => (
           <button
             key={c}
@@ -100,7 +110,7 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
           </button>
         ))}
       </div>}
-      {pick && <p className="periodic-selection" role="status">{pickedCell ? t('periodic.selected', { cell: cellName(pickedCell.gridColumn, pickedCell.gridRow) }) : t('periodic.noSelection')}</p>}
+      {pick && !review && <p className="periodic-selection" role="status">{pickedCell ? t('periodic.selected', { cell: cellName(pickedCell.gridColumn, pickedCell.gridRow) }) : t('periodic.noSelection')}</p>}
       {(more.left || more.right) && <p className="periodic-scroll-hint">{t('periodic.scrollHint')}</p>}
       <div className={`periodic-scroll-wrap${more.left ? ' more-left' : ''}${more.right ? ' more-right' : ''}`}>
       <div className="periodic-scroll" ref={scrollRef}>
@@ -113,22 +123,26 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
             const category = row[tile.category] ?? ''
             const dimmed = highlight !== null && category !== highlight
             const picked = pick?.selected === canonical
+            const isTarget = review?.target === canonical
+            const isWrong = !!review && picked && !isTarget
             return (
               <button
                 key={canonical}
                 type="button"
                 role="gridcell"
-                className={`element-tile ${categoryClass(category)}${dimmed ? ' is-dimmed' : ''}${picked ? ' is-picked' : ''}`}
+                className={`element-tile ${categoryClass(category)}${dimmed ? ' is-dimmed' : ''}${picked && !review ? ' is-picked' : ''}${isTarget ? ' is-target' : ''}${isWrong ? ' is-wrong' : ''}`}
                 style={{ gridColumn: gridColumn + offset, gridRow: gridRow + offset }}
+                ref={isTarget ? targetRef : undefined}
+                disabled={!!review}
                 onClick={() => (pick ? pick.onPick(canonical) : onOpenFiche?.(canonical))}
-                aria-label={pick ? cellName(gridColumn, gridRow) : data.value(canonical)}
+                aria-label={review ? (isTarget ? `${data.value(canonical)} — ${t('periodic.reviewTarget')}` : isWrong ? `${data.value(canonical)} — ${t('periodic.reviewWrong')}` : cellName(gridColumn, gridRow)) : pick ? cellName(gridColumn, gridRow) : data.value(canonical)}
                 aria-selected={pick ? picked : undefined}
                 title={pick ? undefined : data.value(canonical)}
               >
-                {!pick && <>
+                {(!pick || isTarget || isWrong) && <>
                   <span className="element-number">{row[tile.number]}</span>
                   <span className="element-symbol">{row[tile.symbol]}</span>
-                  <span className="element-name">{data.value(canonical)}</span>
+                  {!pick && <span className="element-name">{data.value(canonical)}</span>}
                 </>}
               </button>
             )
@@ -139,7 +153,7 @@ export function PeriodicTablePage({ rows, schema, i18n, tile, groupColumn, perio
     </>
   )
 
-  if (pick) return <div className={noColors ? 'periodic-pick no-colors' : 'periodic-pick'}>{body}</div>
+  if (pick) return <div className={noColors && !review ? 'periodic-pick no-colors' : review ? 'periodic-pick is-review' : 'periodic-pick'}>{body}{review && <p className="periodic-review-legend"><span className="swatch is-target" aria-hidden="true" /> {t('periodic.reviewTarget')}{pick.selected && pick.selected !== review.target && <> · <span className="swatch is-wrong" aria-hidden="true" /> {t('periodic.reviewWrong')}</>}</p>}</div>
   return (
     <section className="periodic-page">
       <div className="stats-header">

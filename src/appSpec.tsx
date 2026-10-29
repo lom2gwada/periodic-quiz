@@ -244,8 +244,8 @@ function buildDataset(rows: Row[], schemaConfig: SchemaConfig | null): Dataset {
       targets: rows
         .filter((row) => elementPosition(Number(row[COLUMNS.number]), Number(row[COLUMNS.group]), Number(row[COLUMNS.period])))
         .map((row) => row[schema.subjectColumn] ?? ''),
-      render: ({ selected, onPick }) => (
-        <PeriodicTablePage rows={rows} schema={schema} i18n={elementsI18n} tile={COLUMNS} groupColumn={COLUMNS.group} periodColumn={COLUMNS.period} pick={{ selected, onPick }} />
+      render: ({ target, selected, onPick, review }) => (
+        <PeriodicTablePage rows={rows} schema={schema} i18n={elementsI18n} tile={COLUMNS} groupColumn={COLUMNS.group} periodColumn={COLUMNS.period} pick={{ selected, onPick, review: review ? { target } : undefined }} />
       ),
     },
     views: [{
